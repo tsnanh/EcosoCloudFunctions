@@ -28,14 +28,14 @@ exports.treeListener = functions.firestore
             snap.docChanges().forEach(doc => {
                 if (doc.type === 'added' || doc.type === 'modified') {
                     const post = doc.doc.data();
-                    tree += Math.round(post.likes.count / 500);
-                    tree += Math.round(post.comments.count / 200);
-                    if (post.likes.count > 500) {
+                    tree += Math.round(post.likes.count / 100);
+                    tree += Math.round(post.comments.count / 50);
+                    if (post.likes.count > 50) {
                         postCount++;
                     }
                 }
             });
-            tree += Math.round(postCount / 200);
+            tree += Math.round(postCount / 100);
             console.log(tree)
             firestore.collection('users').doc(context.params.userID).update('tree', tree);
         })
