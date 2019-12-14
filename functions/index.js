@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 
-var serviceAccount = require("./ecoso.json");
+let serviceAccount = require("./ecoso.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -20,8 +20,8 @@ const firestore = admin.firestore();
 exports.treeListener = functions.firestore
 .document('users/{userID}/posts/{postID}')
 .onUpdate((snapshot, context) => {
-    const dataAfter = snapshot.after.data()
-    const databefore = snapshot.before.data()
+    const dataAfter = snapshot.after.data();
+    const databefore = snapshot.before.data();
     if (dataAfter !== databefore) {
         firestore.collection('users').doc(context.params.userID).collection('posts').onSnapshot(snap => {
             let postCount = 0, tree = 0;
@@ -36,7 +36,7 @@ exports.treeListener = functions.firestore
                 }
             });
             tree += Math.round(postCount / 100);
-            console.log(tree)
+            console.log(tree);
             firestore.collection('users').doc(context.params.userID).update('tree', tree);
         })
     }
@@ -47,11 +47,11 @@ exports.countCreatePost = functions.firestore.document('users/{userID}/posts/{po
     firestore.collection('users').doc(context.params.userID).collection('posts').onSnapshot(snap => {
         firestore.collection('users').doc(context.params.userID).update('postCount', snap.docs.length)
     })
-})
+});
 
 exports.countDeletePost = functions.firestore.document('users/{userID}/posts/{postID}')
 .onDelete((snapshot, context) => {
     firestore.collection('users').doc(context.params.userID).collection('posts').onSnapshot(snap => {
         firestore.collection('users').doc(context.params.userID).update('postCount', snap.docs.length)
     })
-})
+});
